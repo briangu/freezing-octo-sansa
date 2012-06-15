@@ -1,8 +1,6 @@
 package freezingoctosansa;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 public class Main {
 
@@ -35,6 +33,22 @@ public class Main {
     bh2.print();
     bh.merge(bh2);
     bh.print();
+
+    MaxSubSequence mss = new MaxSubSequence();
+    mss.compute(new Integer[]{1, 2, -5, 4, 7, -2});
+    System.out.println(String.format("(Sum,Start,Stop) = (%d,%d,%d)", mss.Sum, mss.Start, mss.Stop));
+
+    DAG.Node nodeD = new DAG.Node("D");
+    DAG.Node nodeC = new DAG.Node(Arrays.asList(nodeD),"C");
+    DAG.Node nodeB = new DAG.Node(Arrays.asList(nodeD),"B");
+    DAG.Node nodeA = new DAG.Node(Arrays.asList(nodeC, nodeB),"A");
+    nodeA.print();
+
+    int[] w = new int[] { 1, 3, 5, 9, 1 };
+    int[] v = new int[] { 200, 150, 2, 100, 90 };
+    System.out.println(Knapsack.A(w, v, 1, 10));
+
+
   }
 
   public static <T> void print(List<T> arr) {
