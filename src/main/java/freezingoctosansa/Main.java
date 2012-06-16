@@ -44,9 +44,26 @@ public class Main {
     DAG.Node nodeA = new DAG.Node(Arrays.asList(nodeC, nodeB),"A");
     nodeA.print();
 
-    int[] w = new int[] { 1, 3, 5, 9, 1 };
-    int[] v = new int[] { 200, 150, 2, 100, 90 };
-    System.out.println(Knapsack.A(w, v, 1, 10));
+    /*
+    Input:
+    http://stackoverflow.com/questions/11036689/solving-the-integer-knapsack
+
+4 5
+
+1 8
+2 4
+3 0
+2 5
+2 3
+
+
+Output:
+13
+
+     */
+    int[] w = new int[] { 1, 2, 3, 2, 2 };
+    int[] v = new int[] { 8, 4, 0, 5, 3 };
+    System.out.println(Knapsack.A(w, v, w.length, 4));
 
 
   }
