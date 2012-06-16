@@ -65,7 +65,17 @@ Output:
     int[] v = new int[] { 8, 4, 0, 5, 3 };
     System.out.println(Knapsack.A(w, v, w.length, 4));
 
+    int[] w2 = new int[] {2,3,4,5};
+    int[] v2 = new int[] {3,4,5,6};
 
+    Knapsack knapsack;
+    knapsack = new Knapsack(w, v, 4);
+    knapsack.pack();
+    knapsack.print();
+
+    knapsack = new Knapsack(w2, v2, 5);
+    knapsack.pack();
+    knapsack.print();
   }
 
   public static <T> void print(List<T> arr) {
