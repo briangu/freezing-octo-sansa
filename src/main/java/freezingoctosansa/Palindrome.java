@@ -2,6 +2,7 @@ package freezingoctosansa;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 public class Palindrome {
@@ -36,8 +37,7 @@ public class Palindrome {
     int c = 0;
     while (n > 0) {
       c++;
-      k *= 10;
-      k += n % 10;
+      k = (k * 10) + n % 10;
       n /= 10;
     }
     n = q;
