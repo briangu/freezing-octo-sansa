@@ -77,9 +77,17 @@ Output:
     knapsack.pack();
     knapsack.print();
 
-    PrimeGenerator pg = new PrimeGenerator(1, 100000);
+    PrimeGenerator pg = new PrimeGenerator(1, 100);
     pg.generate();
     pg.print();
+
+    Palindrome palindrome = new Palindrome(808);
+    palindrome.next();
+    System.out.println(palindrome.current);
+
+    palindrome = new Palindrome(2133);
+    palindrome.next();
+    System.out.println(palindrome.current);
   }
 
   public static <T> void print(List<T> arr) {
