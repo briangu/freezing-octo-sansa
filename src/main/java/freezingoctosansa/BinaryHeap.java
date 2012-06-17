@@ -3,13 +3,13 @@ package freezingoctosansa;
 
 public class BinaryHeap {
 
-  public int _h;
+  public int _capacity;
   public Integer[] _arr;
   public int _size = 0;
 
   public BinaryHeap(int h) {
-    _h = h;
-    _arr = new Integer[(int) (Math.pow(2,_h) - 1)];
+    _capacity = h;
+    _arr = new Integer[(int) (Math.pow(2, _capacity) - 1)];
   }
 
   public int size() {
@@ -82,6 +82,13 @@ public class BinaryHeap {
 
   public void print() {
     print(0, 0, "*");
+  }
+
+  private void swap(int i, int j)
+  {
+    int tmp = _arr[j];
+    _arr[j] = _arr[i];
+    _arr[i] = tmp;
   }
 
   private void print(int i, int level, String prefix) {

@@ -88,6 +88,12 @@ Output:
     palindrome = new Palindrome(2133);
     palindrome.next();
     System.out.println(palindrome.current);
+
+    System.out.println(ExpressionTransform.Transform("(a+(b*c))"));
+    System.out.println(ExpressionTransform.Transform("((a+b)*c)"));
+    System.out.println(ExpressionTransform.Transform("((a+b)*(z+x))"));
+    System.out.println(ExpressionTransform.Transform("((a+t)*((b+(a+c))^(c+d)))"));
+
   }
 
   public static <T> void print(List<T> arr) {
@@ -96,5 +102,4 @@ Output:
       System.out.println((i < arr.size() - 1) ? "," : "");
     }
   }
-
 }
