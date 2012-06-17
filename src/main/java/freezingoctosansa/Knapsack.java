@@ -40,6 +40,7 @@ public class Knapsack {
     Capacity = C;
   }
 
+  // http://www.cse.unl.edu/~goddard/Courses/CSCE310J/Lectures/Lecture8-DynamicProgramming.pdf
   public int pack()
   {
     B = new int[Weights.length+1][Capacity+1];

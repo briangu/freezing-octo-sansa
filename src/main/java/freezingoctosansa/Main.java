@@ -76,6 +76,10 @@ Output:
     knapsack = new Knapsack(w2, v2, 5);
     knapsack.pack();
     knapsack.print();
+
+    PrimeGenerator pg = new PrimeGenerator(1, 100000);
+    pg.generate();
+    pg.print();
   }
 
   public static <T> void print(List<T> arr) {
