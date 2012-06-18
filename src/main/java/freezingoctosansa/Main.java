@@ -99,6 +99,21 @@ Output:
     for (String line : lines) {
       System.out.println(line);
     }
+
+    PrintStars.printStars(1);
+    PrintStars.printStars(2);
+    PrintStars.printStars(4);
+
+    MaxStack ms = new MaxStack();
+    ms.push(1);
+    ms.push(3);
+    ms.push(3);
+    System.out.println("max = " + ms.max());
+    ms.pop();
+    System.out.println("max = " + ms.max());
+    ms.pop();
+    System.out.println("max = " + ms.max());
+    ms.pop();
   }
 
   public static <T> void print(List<T> arr) {

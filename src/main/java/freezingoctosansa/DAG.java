@@ -39,13 +39,13 @@ public class DAG {
 
         PathNode node = stack.pop();
 
-        String nextPath = node.Path.length() == 0 ? node.Value.toString() : node.Path + ":" + node.Value.toString();
+        String path = node.Path.length() == 0 ? node.Value.toString() : node.Path + ":" + node.Value.toString();
 
         if (node.Next.size() == 0) {
-          System.out.println(nextPath);
+          System.out.println(path);
         } else {
           for (Node next : node.Next) {
-            stack.push(new PathNode(next, nextPath));
+            stack.push(new PathNode(next, path));
           }
         }
       }
