@@ -94,6 +94,11 @@ Output:
     System.out.println(ExpressionTransform.Transform("((a+b)*(z+x))"));
     System.out.println(ExpressionTransform.Transform("((a+t)*((b+(a+c))^(c+d)))"));
 
+    Justified justified = new Justified(10);
+    List<String> lines = justified.justify("The quick brown fox jumps over the lazy dog.");
+    for (String line : lines) {
+      System.out.println(line);
+    }
   }
 
   public static <T> void print(List<T> arr) {
