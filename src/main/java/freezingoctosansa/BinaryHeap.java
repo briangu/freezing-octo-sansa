@@ -26,18 +26,6 @@ public class BinaryHeap {
     siftUp(_size - 1);
   }
 
-  private void siftUp(int i) {
-    if (i == 0) return;
-
-    int parentIdx = getParent(i);
-    if (_arr[parentIdx] > _arr[i]) {
-      int tmp = _arr[parentIdx];
-      _arr[parentIdx] = _arr[i];
-      _arr[i] = tmp;
-      siftUp(parentIdx);
-    }
-  }
-
   public int deleteMin() {
     if (_size == 0) throw new RuntimeException("heap is empty");
     int min = _arr[0];
@@ -45,6 +33,16 @@ public class BinaryHeap {
     _size--;
     siftDown(0);
     return min;
+  }
+
+  private void siftUp(int i) {
+    if (i == 0) return;
+
+    int parentIdx = getParent(i);
+    if (_arr[parentIdx] > _arr[i]) {
+      swap(i, parentIdx);
+      siftUp(parentIdx);
+    }
   }
 
   private void siftDown(int i) {
@@ -59,17 +57,11 @@ public class BinaryHeap {
         minIdx = leftIdx;
       }
     } else {
-      if (_arr[leftIdx] <= _arr[rightIdx]) {
-        minIdx = leftIdx;
-      } else {
-        minIdx = rightIdx;
-      }
+      minIdx = (_arr[leftIdx] <= _arr[rightIdx]) ? leftIdx : rightIdx;
     }
 
     if (_arr[i] > _arr[minIdx]) {
-      int tmp = _arr[minIdx];
-      _arr[minIdx] = _arr[i];
-      _arr[i] = tmp;
+      swap(i, minIdx);
       siftDown(minIdx);
     }
   }
@@ -80,15 +72,14 @@ public class BinaryHeap {
     }
   }
 
-  public void print() {
-    print(0, 0, "*");
-  }
-
-  private void swap(int i, int j)
-  {
+  private void swap(int i, int j) {
     int tmp = _arr[j];
     _arr[j] = _arr[i];
     _arr[i] = tmp;
+  }
+
+  public void print() {
+    print(0, 0, "*");
   }
 
   private void print(int i, int level, String prefix) {
