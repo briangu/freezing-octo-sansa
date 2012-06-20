@@ -49,21 +49,49 @@ public class WordSegmenter {
     return root;
   }
 
-  public String segment(String text) {
+/*
+  public String segment2(String text) {
     return segment(text, _index);
   }
 
-  private String segment(String text, Node index) {
+  private String segment2(String text, Node index) {
     if (index.IsTermination || text.length() == 0) return text;
 
     int offset = 0;
     Character ch;
+
     while(offset < text.length() && index.Children.containsKey(ch = text.charAt(offset))) {
       index = index.Children.get(ch);
       if (index.IsTermination) {
         String suffixSegments = segment(text.substring(offset + 1), _index);
         if (suffixSegments != null) {
           return text.substring(0, offset + 1) + " " + suffixSegments;
+        }
+      }
+      ++offset;
+    }
+
+    return null;
+  }
+*/
+
+
+  public String segment(String text) {
+    return segment(text, _index, 0);
+  }
+
+  private String segment(String text, Node index, int start) {
+    if (index.IsTermination || start >= text.length()) return start >= text.length() ? "" : text.substring(start);
+
+    int offset = start;
+    Character ch;
+
+    while(offset < text.length() && index.Children.containsKey(ch = text.charAt(offset))) {
+      index = index.Children.get(ch);
+      if (index.IsTermination) {
+        String suffixSegments = segment(text, _index, offset + 1);
+        if (suffixSegments != null) {
+          return text.substring(start, offset + 1) + " " + suffixSegments;
         }
       }
       ++offset;
