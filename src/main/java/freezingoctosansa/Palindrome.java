@@ -20,16 +20,6 @@ public class Palindrome {
     return current;
   }
 
-  public static boolean isPalindromeString(int n)
-  {
-    String s = String.valueOf(n);
-    int l = s.length();
-    int mid = (l % 2 == 0) ? l / 2 : (l - 1) / 2;
-    String a = s.substring(0,mid);
-    String b = new StringBuffer(s.substring(mid + (l % 2))).reverse().toString();
-    return a.equals(b);
-  }
-
   public static boolean isPalindrome(int n)
   {
     int q = n;

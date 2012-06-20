@@ -63,7 +63,7 @@ Output:
      */
     int[] w = new int[] { 1, 2, 3, 2, 2 };
     int[] v = new int[] { 8, 4, 0, 5, 3 };
-    System.out.println(Knapsack.A(w, v, w.length, 4));
+    System.out.println(Knapsack.Value(w, v, w.length, 4));
 
     int[] w2 = new int[] {2,3,4,5};
     int[] v2 = new int[] {3,4,5,6};
@@ -118,17 +118,17 @@ Output:
     RingBuffer ringBuffer = new RingBuffer(2);
     Integer val;
     ringBuffer.write(2);
-    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
-    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read()) == null ? "empty" : val);
+    System.out.println((val = ringBuffer.read()) == null ? "empty" : val);
     ringBuffer.write(3);
     System.out.println((val = ringBuffer.read())== null ? "empty" : val);
     System.out.println((val = ringBuffer.read())== null ? "empty" : val);
 
     ringBuffer.write(4);
     ringBuffer.write(5);
-    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
-    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
-    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read()) == null ? "empty" : val);
+    System.out.println((val = ringBuffer.read()) == null ? "empty" : val);
+    System.out.println((val = ringBuffer.read()) == null ? "empty" : val);
 
     ringBuffer.write(6);
     ringBuffer.write(7);
@@ -144,6 +144,28 @@ Output:
     System.out.println((val = ringBuffer.read())== null ? "empty" : val);
     System.out.println((val = ringBuffer.read())== null ? "empty" : val);
     System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+
+    Set<DiagInteger> foo = new HashSet<DiagInteger>();
+    foo.add(new DiagInteger(3)); // only calls hashCode
+    foo.add(new DiagInteger(4)); // only calls hashCode
+    foo.add(new DiagInteger(3)); // calls hashCode and then equals
+
+    Set<String> dict = new HashSet<String>();
+    dict.add("them");
+    dict.add("the");
+    dict.add("quick");
+    dict.add("brown");
+    dict.add("fox");
+    dict.add("jumps");
+    dict.add("over");
+    dict.add("the");
+    dict.add("lazy");
+    dict.add("dog");
+    WordSegmenter segmenter = new WordSegmenter(dict);
+    System.out.println(segmenter.segment("the"));
+    System.out.println(segmenter.segment("them"));
+    System.out.println(segmenter.segment("thequickbrownfoxjumpsoverthelazydog"));
+
   }
 
   public static <T> void print(List<T> arr) {
