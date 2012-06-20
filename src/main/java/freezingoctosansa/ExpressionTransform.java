@@ -33,6 +33,10 @@ public class ExpressionTransform {
     }
   }
 
+  private boolean isOperator(char ch) {
+    return (ch == '*' || ch == '-' || ch == '/' || ch == '+' || ch == '^');
+  }
+
   // (EXP OP EXP)
   public Node parse(String exp) {
     Stack<Node> stack = new Stack<Node>();
@@ -53,7 +57,7 @@ public class ExpressionTransform {
         Node parent = stack.pop();
         stack.push(node);
         stack.push(parent);
-      } else if (ch == '*' || ch == '-' || ch == '/' || ch == '+' || ch == '^') {
+      } else if (isOperator(ch)) {
         node.Value = String.valueOf(ch);
         stack.push(node);
       } else {

@@ -114,6 +114,36 @@ Output:
     ms.pop();
     System.out.println("max = " + ms.max());
     ms.pop();
+
+    RingBuffer ringBuffer = new RingBuffer(2);
+    Integer val;
+    ringBuffer.write(2);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    ringBuffer.write(3);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+
+    ringBuffer.write(4);
+    ringBuffer.write(5);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+
+    ringBuffer.write(6);
+    ringBuffer.write(7);
+    ringBuffer.write(8);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+
+    ringBuffer.write(9);
+    ringBuffer.write(10);
+    ringBuffer.write(11);
+    ringBuffer.write(12);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
+    System.out.println((val = ringBuffer.read())== null ? "empty" : val);
   }
 
   public static <T> void print(List<T> arr) {
