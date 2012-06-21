@@ -166,6 +166,8 @@ Output:
     System.out.println(segmenter.segment("them"));
     System.out.println(segmenter.segment("thequickbrownfoxjumpsoverthelazydog"));
 
+    SubgraphFinder subgraphFinder = new SubgraphFinder();
+    subgraphFinder.findSubGraphs("./graph.txt");
   }
 
   public static <T> void print(List<T> arr) {
