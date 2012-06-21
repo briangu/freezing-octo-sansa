@@ -49,33 +49,6 @@ public class WordSegmenter {
     return root;
   }
 
-/*
-  public String segment2(String text) {
-    return segment(text, _index);
-  }
-
-  private String segment2(String text, Node index) {
-    if (index.IsTermination || text.length() == 0) return text;
-
-    int offset = 0;
-    Character ch;
-
-    while(offset < text.length() && index.Children.containsKey(ch = text.charAt(offset))) {
-      index = index.Children.get(ch);
-      if (index.IsTermination) {
-        String suffixSegments = segment(text.substring(offset + 1), _index);
-        if (suffixSegments != null) {
-          return text.substring(0, offset + 1) + " " + suffixSegments;
-        }
-      }
-      ++offset;
-    }
-
-    return null;
-  }
-*/
-
-
   public String segment(String text) {
     return segment(text, _index, 0);
   }
