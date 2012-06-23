@@ -50,19 +50,20 @@ public class WordSegmenter {
   }
 
   public String segment(String text) {
-    return segment(text, _index, 0);
+    return segment(text, 0);
   }
 
-  private String segment(String text, Node index, int start) {
-    if (index.IsTermination || start >= text.length()) return start >= text.length() ? "" : text.substring(start);
+  private String segment(String text, int start) {
+    if (start >= text.length()) return "";
 
     int offset = start;
+    Node index = _index;
     Character ch;
 
     while(offset < text.length() && index.Children.containsKey(ch = text.charAt(offset))) {
       index = index.Children.get(ch);
       if (index.IsTermination) {
-        String suffixSegments = segment(text, _index, offset + 1);
+        String suffixSegments = segment(text, offset + 1);
         if (suffixSegments != null) {
           return text.substring(start, offset + 1) + " " + suffixSegments;
         }
