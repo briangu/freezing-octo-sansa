@@ -31,10 +31,9 @@ class Node:
         assert (i < len(self.keys) and self.keys[i][0] != k) or (i >= len(self.keys))
         self.keys.insert(i, (k,[v]))
         child_idx = self.children.index(node)
-#        self.children.insert(i, left)
         self.children[child_idx] = left
         self.children.insert(i+1, right)
-        assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
+        assert len(self.keys) + 1 == len(self.children)
 
     def traverse(self, results):
         if self.is_leaf():
@@ -178,10 +177,6 @@ class TestBTree(unittest.TestCase):
         print(r)
         for k,v in zip(keys,r):
             self.assertEqual(k,v[0])
-
-
-        # Assertions to check the overall structure and properties of the tree
-
 
 if __name__ == "__main__":
     unittest.main()
