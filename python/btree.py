@@ -21,16 +21,33 @@ class Node:
             self.keys[i][1].append(v)
         else:
             self.keys.insert(i, (k,[v]))
+        assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
 
-    def insert_inner(self, k, v, left, right):
+    def push_up(self, k, v, node, left, right):
         assert not self.is_leaf()
         i = 0
         while i < len(self.keys) and self.keys[i][0] < k:
             i += 1
         assert (i < len(self.keys) and self.keys[i][0] != k) or (i >= len(self.keys))
         self.keys.insert(i, (k,[v]))
-        self.children.insert(i, left)
+        child_idx = self.children.index(node)
+#        self.children.insert(i, left)
+        self.children[child_idx] = left
         self.children.insert(i+1, right)
+        assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
+
+    def traverse(self, results):
+        if self.is_leaf():
+            results.extend(self.keys)
+        else:
+            assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
+            i = 0
+            while i < len(self.keys):
+                self.children[i].traverse(results)
+                results.append(self.keys[i])
+                i += 1
+            if self.children:
+                self.children[-1].traverse(results)
 
 
 class BTree:
@@ -40,7 +57,9 @@ class BTree:
 
     def traverse(self):
         if self.root:
-            self.root.traverse()
+            results = []
+            self.root.traverse(results)
+        return results
 
     def find(self, k, v=None):
         return self.root.find(k, v=v) if self.root else None
@@ -57,7 +76,7 @@ class BTree:
             child.parent = right
 
         if node.parent:
-            node.parent.insert_inner(m[0], m[1], left, right)
+            node.parent.push_up(m[0], m[1], node, left, right)
             if node.parent.is_full():
                 self.split_node(node.parent)
         else:
@@ -149,9 +168,17 @@ class TestBTree(unittest.TestCase):
 
     def test_multiple_inserts(self):
         btree = BTree(k=3)
-        keys = [10, 20, 5, 15, 25, 30, 3, 8]
+        keys = [10, 20, 5, 15, 25, 30, 25, 3, 8]
         for key in keys:
             btree.insert(key, f'value{key}')
+        r = btree.traverse()
+        keys = list(set(keys))
+        keys.sort()
+        print(keys)
+        print(r)
+        for k,v in zip(keys,r):
+            self.assertEqual(k,v[0])
+
 
         # Assertions to check the overall structure and properties of the tree
 
