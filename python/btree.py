@@ -12,7 +12,7 @@ class Node:
         return len(self.children) == 0
 
     def need_split(self):
-        return len(self.keys) > self.k
+        return len(self.keys) > 2*self.k
     
     def find(self, k, v=None):
         if not self.keys:
@@ -26,25 +26,24 @@ class Node:
 
     def insert_at_leaf(self, k, v):
         assert self.is_leaf()
+        assert not isinstance(v, list)
         i = 0
         while i < len(self.keys) and self.keys[i][0] < k:
             i += 1
         if i < len(self.keys) and self.keys[i][0] == k:
             self.keys[i][1].append(v)
-            assert not isinstance(self.keys[i][1][-1], list)
         else:
             self.keys.insert(i, (k,[v]))
-            assert not isinstance(self.keys[i][1][-1], list)
         assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
 
-    def push_up(self, k, varr, node, left, right):
+    def push_up(self, k, v, node, left, right):
         assert not self.is_leaf()
+        assert isinstance(v, list)
         i = 0
         while i < len(self.keys) and self.keys[i][0] < k:
             i += 1
         assert (i < len(self.keys) and self.keys[i][0] != k) or (i >= len(self.keys))
-        self.keys.insert(i, (k,varr))
-        assert not isinstance(self.keys[i][1][-1], list)
+        self.keys.insert(i, (k,v))
         child_idx = self.children.index(node)
         self.children[child_idx] = left
         self.children.insert(i+1, right)
@@ -62,6 +61,27 @@ class Node:
                 i += 1
             if self.children:
                 self.children[-1].traverse(results)
+
+    def delete(self, k, v=None):
+        if not self.keys:
+            return None
+        i = 0
+        while i < len(self.keys) and self.keys[i][0] < k:
+            i += 1
+        if i < len(self.keys) and self.keys[i][0] == k:
+            if v is None:
+                # delete the entire key
+                self.keys.remove(i)
+            elif v in self.keys[i][1]:
+                self.keys[i][1].remove(v)
+                if len(self.keys[i][1]) == 0:
+                    self.keys.remove(i)
+            if len(self.keys) < self.k:
+                # merge up
+                print("merge up required")
+                pass
+        return None if self.is_leaf() else self.children[i].find(k,v)
+        
 
 
 class BTree:
@@ -155,17 +175,17 @@ class TestBTree(unittest.TestCase):
 
     def test_insert_with_leaf_split(self):
         btree = BTree(k=2)
-        btree.insert(10, 'value10')
-        btree.insert(20, 'value20')
+        for i in range(4):
+            btree.insert(i*10, f'value{i*10}')
         btree.insert(15, 'value15')  # This should cause a split
 
         self.assertEqual(len(btree.root.keys), 1)
         self.assertEqual(btree.root.keys[0][0], 15)
         self.assertEqual(len(btree.root.children), 2)
         # Check left child
-        self.assertEqual(btree.root.children[0].keys, [(10, ['value10'])])
+        self.assertEqual(btree.root.children[0].keys, [(0, ['value0']), (10, ['value10'])])
         # Check right child
-        self.assertEqual(btree.root.children[1].keys, [(20, ['value20'])])
+        self.assertEqual(btree.root.children[1].keys, [(20, ['value20']), (30, ['value30'])])
 
     def test_insert_with_root_split(self):
         btree = BTree(k=2)
@@ -175,8 +195,8 @@ class TestBTree(unittest.TestCase):
         btree.insert(30, 'value30')
 
         self.assertIsNotNone(btree.root)
-        self.assertEqual(len(btree.root.keys), 1)
-        self.assertEqual(len(btree.root.children), 2)
+        self.assertEqual(len(btree.root.keys), 3)
+        self.assertEqual(len(btree.root.children), 0)
         # More assertions to verify the structure after split
 
     def test_multiple_inserts(self):
@@ -233,6 +253,50 @@ class TestNodeFindMethod(unittest.TestCase):
         node = empty_tree.find(10)
         self.assertIsNone(node)
 
+
+# class TestBTreeDeleteMethod(unittest.TestCase):
+#     def setUp(self):
+#         # Set up a BTree for testing the delete method
+#         self.btree = BTree(k=2)
+#         # Insert some keys and values
+#         for key in range(1, 11):  # Insert keys 1 through 10
+#             self.btree.insert(key, f'value{key}')
+
+#     def test_delete_from_leaf_without_underflow(self):
+#         self.btree.delete(5, 'value5')
+#         # After deletion, check if the tree still contains all keys except 5
+#         for key in range(1, 11):
+#             if key != 5:
+#                 self.assertIsNotNone(self.btree.find(key))
+#             else:
+#                 self.assertIsNone(self.btree.find(5))
+
+#     def test_delete_from_internal_node(self):
+#         # Assuming deleting 5 causes internal node deletion
+#         self.btree.delete(5, 'value5')
+#         # Check if the tree is correctly structured after deletion
+#         # You will need to add assertions based on your expected tree structure
+
+#     def test_delete_key_causing_underflow(self):
+#         # You need to set up a scenario where deleting a key causes underflow
+#         # Then check if the tree handles this underflow correctly
+#         pass
+
+#     def test_delete_non_existent_key(self):
+#         # Deleting a non-existent key should not alter the tree
+#         original_structure = self.btree.traverse()  # Get the current tree structure
+#         self.btree.delete(100, 'value100')  # Non-existent key
+#         self.assertEqual(original_structure, self.btree.traverse())
+
+#     def test_sequential_deletions(self):
+#         for key in range(1, 11):
+#             self.btree.delete(key, f'value{key}')
+#             self.assertIsNone(self.btree.find(key))
+#         # After all deletions, the tree should be empty
+#         self.assertEqual([], self.btree.traverse())
+
+#     # Additional tests can be added for other scenarios like
+#     # deleting a key with multiple values, random deletions, etc.
 
 if __name__ == '__main__':
     unittest.main()
