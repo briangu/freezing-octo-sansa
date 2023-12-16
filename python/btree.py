@@ -15,18 +15,14 @@ class Node:
         return len(self.keys) > self.k
     
     def find(self, k, v=None):
-        if self.keys:
-            i = 0
-            while i < len(self.keys) and self.keys[i][0] < k:
-                i += 1
-            if i < len(self.keys) and self.keys[i][0] == k:
-                if v is not None:
-                    return self if v in self.keys[i][1] else None
-                else:
-                    return self
-            return None if self.is_leaf() else self.children[i].find(k,v)            
-        else:
+        if not self.keys:
             return None
+        i = 0
+        while i < len(self.keys) and self.keys[i][0] < k:
+            i += 1
+        if i < len(self.keys) and self.keys[i][0] == k:
+            return self if v is None or v in self.keys[i][1] else None
+        return None if self.is_leaf() else self.children[i].find(k,v)
 
     def insert_at_leaf(self, k, v):
         assert self.is_leaf()
@@ -35,18 +31,20 @@ class Node:
             i += 1
         if i < len(self.keys) and self.keys[i][0] == k:
             self.keys[i][1].append(v)
+            assert not isinstance(self.keys[i][1][-1], list)
         else:
             self.keys.insert(i, (k,[v]))
-            print("keys: ", self.keys)
+            assert not isinstance(self.keys[i][1][-1], list)
         assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
 
-    def push_up(self, k, v, node, left, right):
+    def push_up(self, k, varr, node, left, right):
         assert not self.is_leaf()
         i = 0
         while i < len(self.keys) and self.keys[i][0] < k:
             i += 1
         assert (i < len(self.keys) and self.keys[i][0] != k) or (i >= len(self.keys))
-        self.keys.insert(i, (k,[v]))
+        self.keys.insert(i, (k,varr))
+        assert not isinstance(self.keys[i][1][-1], list)
         child_idx = self.children.index(node)
         self.children[child_idx] = left
         self.children.insert(i+1, right)

@@ -1,20 +1,20 @@
 
-class _Cell:
+# class _Cell:
 
-  def __init__(self, fn, deps=None, name=None):
-    self.deps = deps or []
-    self.fn = fn
-    self.cache = None
-    self.name = name
+#   def __init__(self, fn, deps=None, name=None):
+#     self.deps = deps or []
+#     self.fn = fn
+#     self.cache = None
+#     self.name = name
 
-  def __call__(self):
-    if self.cache is None:
-      self.cache = self.fn(*[x() for x in self.deps])
-      if self.name:
-        print(f"node: {self.name} filling cache {self.cache} from {[x.name for x in self.deps]}")
-    elif self.name:
-      print(f"node: {self.name} using cache {self.cache} from {[x.name for x in self.deps]}")
-    return self.cache
+#   def __call__(self):
+#     if self.cache is None:
+#       self.cache = self.fn(*[x() for x in self.deps])
+#       if self.name:
+#         print(f"node: {self.name} filling cache {self.cache} from {[x.name for x in self.deps]}")
+#     elif self.name:
+#       print(f"node: {self.name} using cache {self.cache} from {[x.name for x in self.deps]}")
+#     return self.cache
 
 
 class Cell:
