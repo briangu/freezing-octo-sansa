@@ -11,6 +11,9 @@ class Node:
     def is_leaf(self):
         return len(self.children) == 0
 
+    def is_underflow(self):
+        return False if self.parent is None else len(self.keys) < self.k//2
+
     def need_split(self):
         return len(self.keys) > 2*self.k
     
@@ -76,12 +79,11 @@ class Node:
                 self.keys[i][1].remove(v)
                 if len(self.keys[i][1]) == 0:
                     self.keys.remove(i)
-            if len(self.keys) < self.k:
+            if self.is_underflow():
                 # merge up
                 print("merge up required")
                 pass
         return None if self.is_leaf() else self.children[i].find(k,v)
-        
 
 
 class BTree:
