@@ -10,7 +10,7 @@ class Node:
         return len(self.children) == 0
 
     def is_full(self):
-        return len(self.keys) == self.k
+        return len(self.keys) > self.k
 
     def insert_at_leaf(self, k, v):
         assert self.is_leaf()
@@ -113,7 +113,7 @@ class BTree:
         current.insert_at_leaf(k, v)
 
         # Handle the case where the leaf node is full and needs splitting
-        if len(current.keys) > self.k:
+        if current.is_full():
             current = self.split_node(current)
 
     def delete(self, k, v):
