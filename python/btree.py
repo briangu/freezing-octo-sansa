@@ -11,7 +11,7 @@ class Node:
     def is_leaf(self):
         return len(self.children) == 0
 
-    def is_full(self):
+    def need_split(self):
         return len(self.keys) > self.k
     
     def find(self, k, v=None):
@@ -79,6 +79,7 @@ class BTree:
         return self.root.find(k, v=v) if self.root else None
 
     def split_node(self, node):
+        print("split: ", node.keys)
         m_idx = len(node.keys)//2
         m = node.keys[m_idx]
         left = Node(self.k, parent=node.parent, keys=node.keys[:m_idx], children=node.children[:m_idx])
@@ -91,7 +92,7 @@ class BTree:
 
         if node.parent:
             node.parent.push_up(m[0], m[1], node, left, right)
-            if node.parent.is_full():
+            if node.parent.need_split():
                 self.split_node(node.parent)
         else:
             self.root = Node(self.k, keys=[m], children=[left, right])
@@ -128,7 +129,7 @@ class BTree:
         current.insert_at_leaf(k, v)
 
         # Handle the case where the leaf node is full and needs splitting
-        if current.is_full():
+        if current.need_split():
             current = self.split_node(current)
 
     def delete(self, k, v):
