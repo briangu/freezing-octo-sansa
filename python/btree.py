@@ -1,3 +1,5 @@
+import unittest
+
 
 class Node:
     def __init__(self, k=2, parent=None, keys=None, children=None):
@@ -11,6 +13,20 @@ class Node:
 
     def is_full(self):
         return len(self.keys) > self.k
+    
+    def find(self, k, v=None):
+        if self.keys:
+            i = 0
+            while i < len(self.keys) and self.keys[i][0] < k:
+                i += 1
+            if i < len(self.keys) and self.keys[i][0] == k:
+                if v is not None:
+                    return self if v in self.keys[i][1] else None
+                else:
+                    return self
+            return None if self.is_leaf() else self.children[i].find(k,v)            
+        else:
+            return None
 
     def insert_at_leaf(self, k, v):
         assert self.is_leaf()
@@ -21,6 +37,7 @@ class Node:
             self.keys[i][1].append(v)
         else:
             self.keys.insert(i, (k,[v]))
+            print("keys: ", self.keys)
         assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
 
     def push_up(self, k, v, node, left, right):
@@ -122,8 +139,6 @@ class BTree:
         self.root.delete(k, v)
 
 
-import unittest
-
 class TestBTree(unittest.TestCase):
     def test_insert_into_empty_tree(self):
         btree = BTree(k=2)
@@ -178,5 +193,47 @@ class TestBTree(unittest.TestCase):
         for k,v in zip(keys,r):
             self.assertEqual(k,v[0])
 
-if __name__ == "__main__":
+
+class TestNodeFindMethod(unittest.TestCase):
+    def setUp(self):
+        # Setup a BTree for testing
+        self.btree = BTree(k=2)
+        # Insert some keys and values
+        self.btree.insert(10, 'value10')
+        self.btree.insert(20, 'value20')
+        self.btree.insert(5, 'value5')
+        self.btree.insert(15, 'value15')
+        self.btree.insert(25, 'value25')
+
+    def test_find_key_in_leaf(self):
+        node = self.btree.find(10)
+        self.assertIsNotNone(node)
+        self.assertIn((10, ['value10']), node.keys)
+
+    def test_find_key_in_non_leaf(self):
+        self.btree.insert(30, 'value30')  # This will cause a split and 20 will be in a non-leaf
+        node = self.btree.find(20)
+        self.assertIsNotNone(node)
+        self.assertIn((20, ['value20']), node.keys)
+
+    def test_find_non_existent_key(self):
+        node = self.btree.find(100)
+        self.assertIsNone(node)
+
+    def test_find_key_with_specific_value_in_leaf(self):
+        node = self.btree.find(10, 'value10')
+        self.assertIsNotNone(node)
+        self.assertIn((10, ['value10']), node.keys)
+
+    def test_find_key_with_non_existent_value(self):
+        node = self.btree.find(10, 'nonexistent')
+        self.assertIsNone(node)
+
+    def test_find_in_empty_tree(self):
+        empty_tree = BTree(k=2)
+        node = empty_tree.find(10)
+        self.assertIsNone(node)
+
+
+if __name__ == '__main__':
     unittest.main()
