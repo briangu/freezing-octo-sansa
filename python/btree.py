@@ -75,12 +75,13 @@ class Node:
         if i < len(self.keys) and self.keys[i][0] == k:
             if v is None:
                 # delete the entire key
-                self.keys.remove(i)
+                del self.keys[i]
                 found = True
             elif v in self.keys[i][1]:
                 self.keys[i][1].remove(v)
                 if len(self.keys[i][1]) == 0:
-                    self.keys.remove(i)
+                    # values are empty, so del entire key
+                    del self.keys[i]
                 found = True
         return self if found else self.children[i].delete(k,v) if not self.is_leaf() else None
 
@@ -188,7 +189,7 @@ class BTree:
             if node.parent.is_underflow():
                 self._merge(node.parent)
 
-    def delete(self, k, v):
+    def delete(self, k, v=None):
         if not self.root:
             return
         node = self.root.delete(k, v)
@@ -292,49 +293,64 @@ class TestNodeFindMethod(unittest.TestCase):
         self.assertIsNone(node)
 
 
-# class TestBTreeDeleteMethod(unittest.TestCase):
-#     def setUp(self):
-#         # Set up a BTree for testing the delete method
-#         self.btree = BTree(k=2)
-#         # Insert some keys and values
-#         for key in range(1, 11):  # Insert keys 1 through 10
-#             self.btree.insert(key, f'value{key}')
+class TestBTreeDeletion(unittest.TestCase):
 
-#     def test_delete_from_leaf_without_underflow(self):
-#         self.btree.delete(5, 'value5')
-#         # After deletion, check if the tree still contains all keys except 5
-#         for key in range(1, 11):
-#             if key != 5:
-#                 self.assertIsNotNone(self.btree.find(key))
-#             else:
-#                 self.assertIsNone(self.btree.find(5))
+    def setUp(self):
+        # Initialize a BTree for testing
+        self.tree = BTree(k=2)
+        # Populate the tree with known values
+        for key, value in [(1, 'a'), (2, 'b'), (3, 'c')]:
+            self.tree.insert(key, value)
 
-#     def test_delete_from_internal_node(self):
-#         # Assuming deleting 5 causes internal node deletion
-#         self.btree.delete(5, 'value5')
-#         # Check if the tree is correctly structured after deletion
-#         # You will need to add assertions based on your expected tree structure
+    def test_delete_from_empty_tree(self):
+        empty_tree = BTree(k=2)
+        empty_tree.delete(1)
+        self.assertEqual(empty_tree.traverse(), [])
 
-#     def test_delete_key_causing_underflow(self):
-#         # You need to set up a scenario where deleting a key causes underflow
-#         # Then check if the tree handles this underflow correctly
-#         pass
+    def test_delete_non_existent_key(self):
+        original_structure = self.tree.traverse()
+        self.tree.delete(99)  # Assume 99 is not in the tree
+        self.assertEqual(self.tree.traverse(), original_structure)
 
-#     def test_delete_non_existent_key(self):
-#         # Deleting a non-existent key should not alter the tree
-#         original_structure = self.btree.traverse()  # Get the current tree structure
-#         self.btree.delete(100, 'value100')  # Non-existent key
-#         self.assertEqual(original_structure, self.btree.traverse())
+    def test_delete_key_from_leaf(self):
+        self.tree.delete(1)  # Assuming 1 is in a leaf
+        self.assertNotIn((1, ['a']), self.tree.traverse())
+        # Additional checks for tree structure can be added
 
-#     def test_sequential_deletions(self):
-#         for key in range(1, 11):
-#             self.btree.delete(key, f'value{key}')
-#             self.assertIsNone(self.btree.find(key))
-#         # After all deletions, the tree should be empty
-#         self.assertEqual([], self.btree.traverse())
+    def test_delete_key_with_specific_value(self):
+        self.tree.insert(4, 'd1')
+        self.tree.insert(4, 'd2')
+        self.tree.delete(4, 'd1')
+        self.assertIn((4, ['d2']), self.tree.traverse())
+        self.assertNotIn((4, ['d1']), self.tree.traverse())
 
-#     # Additional tests can be added for other scenarios like
-#     # deleting a key with multiple values, random deletions, etc.
+    def test_delete_key_with_all_values(self):
+        self.tree.delete(2)
+        self.assertNotIn((2, ['b']), self.tree.traverse())
+
+    def test_delete_key_from_non_leaf(self):
+        # Assuming key 3 is in a non-leaf node
+        self.tree.delete(3)
+        self.assertNotIn((3, ['c']), self.tree.traverse())
+
+    def test_underflow_and_merging(self):
+        # Assuming deleting key 5 causes underflow
+        self.tree.delete(5)
+        # Add checks to verify the tree structure after merging
+
+    def test_root_deletion_and_tree_height_decrease(self):
+        # Assuming root has a single key
+        self.tree.delete(self.tree.root.keys[0][0])
+        # Check the new root and the height of the tree
+
+    def test_complex_deletion_scenario(self):
+        # Perform a series of deletions
+        self.tree.delete(6)
+        self.tree.delete(7)
+        # ... more deletions
+        # Add checks to verify the tree structure after multiple deletions
+
 
 if __name__ == '__main__':
     unittest.main()
+
