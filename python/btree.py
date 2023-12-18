@@ -16,7 +16,7 @@ class Node:
 
     def need_split(self):
         return len(self.keys) > 2*self.k
-    
+
     def find(self, k, v=None):
         if not self.keys:
             return None
@@ -39,7 +39,7 @@ class Node:
             self.keys.insert(i, (k,[v]))
         assert self.is_leaf() or (len(self.keys) + 1 == len(self.children))
 
-    def push_up(self, k, v, node, left, right):
+    def push_up(self, k, v, child, child_left, child_right):
         assert not self.is_leaf()
         assert isinstance(v, list)
         i = 0
@@ -47,9 +47,9 @@ class Node:
             i += 1
         assert (i < len(self.keys) and self.keys[i][0] != k) or (i >= len(self.keys))
         self.keys.insert(i, (k,v))
-        child_idx = self.children.index(node)
-        self.children[child_idx] = left
-        self.children.insert(i+1, right)
+        child_idx = self.children.index(child)
+        self.children[child_idx] = child_left
+        self.children.insert(i+1, child_right)
         assert len(self.keys) + 1 == len(self.children)
 
     def traverse(self, results):
@@ -71,19 +71,43 @@ class Node:
         i = 0
         while i < len(self.keys) and self.keys[i][0] < k:
             i += 1
+        found = False
         if i < len(self.keys) and self.keys[i][0] == k:
             if v is None:
                 # delete the entire key
                 self.keys.remove(i)
+                found = True
             elif v in self.keys[i][1]:
                 self.keys[i][1].remove(v)
                 if len(self.keys[i][1]) == 0:
                     self.keys.remove(i)
-            if self.is_underflow():
-                # merge up
-                print("merge up required")
-                pass
-        return None if self.is_leaf() else self.children[i].find(k,v)
+                found = True
+        return self if found else self.children[i].delete(k,v) if not self.is_leaf() else None
+
+    def merge_with_sibling(self):
+        if self.parent is None:
+            return
+        # get parent key to merge into sibling
+        idx = self.parent.children.index(self)
+        left_sibling = idx > 0
+        sibling_idx = idx - 1 if left_sibling else idx + 1
+        sibling = self.parent.children[sibling_idx]
+        parent_key = self.parent.keys[sibling_idx]
+        del self.parent.keys[sibling_idx]
+        del self.parent.children[idx]
+        # get sibling
+        if left_sibling:
+            # put keys after left sibling's
+            sibling.keys.append(parent_key)
+            sibling.keys.extend(self.keys)
+            if self.children:
+                sibling.children.extend(self.children)
+        else:
+            # put keys before right sibling's
+            sibling.keys.insert(0,parent_key)
+            sibling.keys = self.keys + sibling.keys
+            if self.children:
+                sibling.children = self.children + sibling.children
 
 
 class BTree:
@@ -154,10 +178,22 @@ class BTree:
         if current.need_split():
             current = self.split_node(current)
 
+    def _merge(self, node):
+        if not node.parent:
+            # root, nothing to do
+            return
+        if node.parent:
+            # inner or leaf node
+            node.merge_with_sibling()
+            if node.parent.is_underflow():
+                self._merge(node.parent)
+
     def delete(self, k, v):
         if not self.root:
             return
-        self.root.delete(k, v)
+        node = self.root.delete(k, v)
+        if node and node.is_underflow():
+            self._merge(node)
 
 
 class TestBTree(unittest.TestCase):
